@@ -1,0 +1,54 @@
+from selenium import webdriver
+from selenium.webdriver import ActionChains, Keys
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+import time
+import unittest
+import pytest
+from Project.POM.Pages.HomePage import HomePage
+from Project.POM.Pages.LoginPage import LoginPage
+
+
+class Test_LoginTest(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        obj = Service(r'C:\Users\DELL\PycharmProjects\pythonProject\webdriver\chromedriver.exe')
+        cls.driver = webdriver.Chrome(service=obj)
+        cls.driver.maximize_window()
+        cls.driver.implicitly_wait(10)
+
+
+    def test_Login_valid(self):
+        driver=self.driver
+        driver.get(r'https://opensource-demo.orangehrmlive.com/web/index.php/auth/login')
+
+        login=LoginPage(driver)
+        login.enter_username('Admin')
+        login.enter_pwd('admin123')
+        login.click_login()
+
+        homepage=HomePage(driver)
+        homepage.click_wel()
+        homepage.click_logout()
+
+        time.sleep(10)
+
+    def test_Login_invalid(self):
+        driver = self.driver
+        driver.get(r'https://opensource-demo.orangehrmlive.com/web/index.php/auth/login')
+        login = LoginPage(driver)
+        login.enter_username('Admi1n')
+        login.enter_pwd('admin123')
+        login.click_login()
+        msg=login.check_invalid_user()
+        print(msg)
+
+        time.sleep(10)
+
+
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        cls.driver.close()
+        cls.driver.quit()
+        print("test complete")
